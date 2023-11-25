@@ -90,8 +90,11 @@ class HomeTaskList extends StatelessWidget {
                   ),
                   trailing: Text(
                     EnumToString.convertToString(task.status),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
+                      color: task.status == TaskStatus.done
+                          ? Colors.green
+                          : Colors.red,
                     ),
                   ),
                   contentPadding: const EdgeInsets.symmetric(

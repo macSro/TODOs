@@ -31,7 +31,14 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
-            body: HomeTaskList(tasks: state.tasks),
+            body: state.tasks.isNotEmpty
+                ? HomeTaskList(tasks: state.tasks)
+                : const Center(
+                    child: Text(
+                      "You have yet to to create your first task! 📅",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
           );
         } else {
           return Scaffold(

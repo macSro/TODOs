@@ -31,107 +31,111 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         appBar: AppBar(
           title: const Text('New task'),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _titleController,
-                  validator: _validator,
-                  maxLength: 30,
-                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  maxLines: null,
-                  decoration: const InputDecoration(labelText: 'Title'),
-                ),
-                TextFormField(
-                  controller: _descriptionController,
-                  validator: _validator,
-                  maxLength: 255,
-                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  maxLines: null,
-                  decoration: const InputDecoration(labelText: 'Description'),
-                ),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () async {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(DateTime.now().year + 10),
-                    ).then((value) {
-                      setState(() {
-                        _dueDate = value;
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _titleController,
+                    validator: _validator,
+                    maxLength: 30,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                    maxLines: null,
+                    decoration: const InputDecoration(labelText: 'Title'),
+                    textInputAction: TextInputAction.next,
+                  ),
+                  TextFormField(
+                    controller: _descriptionController,
+                    validator: _validator,
+                    maxLength: 255,
+                    maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                    maxLines: null,
+                    decoration: const InputDecoration(labelText: 'Description'),
+                    textInputAction: TextInputAction.done,
+                  ),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: () async {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(DateTime.now().year + 10),
+                      ).then((value) {
+                        setState(() {
+                          _dueDate = value;
+                        });
                       });
-                    });
-                  },
-                  child: const Text('Select the due date'),
-                ),
-                const SizedBox(height: 16),
-                if (_dueDate == null)
+                    },
+                    child: const Text('Select the due date'),
+                  ),
+                  const SizedBox(height: 16),
+                  if (_dueDate == null)
+                    const Text(
+                      'Due date not selected!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                  if (_dueDate != null)
+                    Text(
+                      'Selected: ${Tools.parseDate(_dueDate!)}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                    ),
+                  const SizedBox(height: 32),
                   const Text(
-                    'Due date not selected!',
+                    'Task type:',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.red,
+                      color: Colors.blue,
                     ),
                   ),
-                if (_dueDate != null)
-                  Text(
-                    'Selected: ${Tools.parseDate(_dueDate!)}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                  const SizedBox(height: 8),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: TaskType.values
+                        .map((type) => RadioListTile(
+                              title: Text(EnumToString.convertToString(type)),
+                              groupValue: _typeId,
+                              value: type.index,
+                              onChanged: (value) {
+                                setState(() {
+                                  _typeId = type.index;
+                                });
+                              },
+                            ))
+                        .toList(),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => _submit(),
+                    child: const Text(
+                      'Save',
+                      style: TextStyle(fontSize: 18),
                     ),
-                  ),
-                const SizedBox(height: 32),
-                const Text(
-                  'Task type:',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: TaskType.values
-                      .map((type) => RadioListTile(
-                            title: Text(EnumToString.convertToString(type)),
-                            groupValue: _typeId,
-                            value: type.index,
-                            onChanged: (value) {
-                              setState(() {
-                                _typeId = type.index;
-                              });
-                            },
-                          ))
-                      .toList(),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => _submit(),
-                  child: const Text(
-                    'Save',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green),
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.green),
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
